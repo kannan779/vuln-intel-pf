@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: vulnerability-predictor-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: vulnerability_db
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-localdev}
+    ports:
+      - "3306:3306"
+    volumes:
+      - vulnerability_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_PASSWORD:-localdev}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  backend:
+    build:
+      context: ./backend/vulnerability-predictor
+    container_name: vulnerability-predictor-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/vulnerability_db?createDatabaseIfNotExist=true&serverTimezone=UTC
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-localdev}
+      PORT: 8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  vulnerability_db_data:

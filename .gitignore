@@ -1,0 +1,26 @@
+# IDE and editor files
+.idea/
+.vscode/
+*.iml
+
+# Java and Maven build output
+**/target/
+*.class
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+application-local.properties
+
+# Large imported datasets and generated reports
+Data/Raw/*
+!Data/Raw/.gitkeep
+*.gz
+*.zip
+*.7z
+*.csv
+
+# Operating-system files
+Thumbs.db
+.DS_Store
